@@ -33,7 +33,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-6 lg:gap-10">
           <Link href="/" className="flex items-center gap-2 z-50" data-testid="link-home">
             <span className="text-primary font-black text-2xl tracking-tighter uppercase">
-              StreamFlix
+              SIDFLIX
             </span>
           </Link>
           

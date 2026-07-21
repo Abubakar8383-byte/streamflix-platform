@@ -25,7 +25,7 @@ export default function Signup() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://picsum.photos/seed/streamflix-bg2/1920/1080" 
+          src="https://picsum.photos/seed/sidflix-bg2/1920/1080" 
           alt="Background" 
           className="w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
@@ -35,7 +35,7 @@ export default function Signup() {
       {/* Header */}
       <header className="relative z-10 px-8 py-6">
         <Link href="/" className="text-primary font-black text-3xl tracking-tighter uppercase" data-testid="link-home">
-          StreamFlix
+          SIDFLIX
         </Link>
       </header>
 

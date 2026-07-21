@@ -24,7 +24,7 @@ export default function Login() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://picsum.photos/seed/streamflix-bg/1920/1080" 
+          src="https://picsum.photos/seed/sidflix-bg/1920/1080" 
           alt="Background" 
           className="w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
@@ -34,7 +34,7 @@ export default function Login() {
       {/* Header */}
       <header className="relative z-10 px-8 py-6">
         <Link href="/" className="text-primary font-black text-3xl tracking-tighter uppercase" data-testid="link-home">
-          StreamFlix
+          SIDFLIX
         </Link>
       </header>
 
@@ -88,7 +88,7 @@ export default function Login() {
 
           <div className="mt-16 text-muted-foreground">
             <p>
-              New to StreamFlix?{" "}
+              New to SIDFLIX?{" "}
               <Link href="/signup" className="text-white hover:underline transition-colors font-medium">
                 Sign up now.
               </Link>

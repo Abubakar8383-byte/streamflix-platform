@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("streamflix_user");
-    const storedProfile = localStorage.getItem("streamflix_profile");
+    const storedUser = localStorage.getItem("sidflix_user");
+    const storedProfile = localStorage.getItem("sidflix_profile");
     
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -46,20 +46,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (email: string) => {
     const newUser = { email };
     setUser(newUser);
-    localStorage.setItem("streamflix_user", JSON.stringify(newUser));
+    localStorage.setItem("sidflix_user", JSON.stringify(newUser));
   };
 
   const logout = () => {
     setUser(null);
     setProfile(null);
-    localStorage.removeItem("streamflix_user");
-    localStorage.removeItem("streamflix_profile");
+    localStorage.removeItem("sidflix_user");
+    localStorage.removeItem("sidflix_profile");
   };
 
   const selectProfile = (name: string, avatarSeed: string) => {
     const newProfile = { name, avatarSeed };
     setProfile(newProfile);
-    localStorage.setItem("streamflix_profile", JSON.stringify(newProfile));
+    localStorage.setItem("sidflix_profile", JSON.stringify(newProfile));
   };
 
   if (isLoading) {
