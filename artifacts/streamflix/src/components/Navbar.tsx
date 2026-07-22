@@ -20,15 +20,15 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setLocation("/login");
   };
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md border-b border-white/5" : "bg-gradient-to-b from-black/80 to-transparent"}`}>
       <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-        
+
         {/* Left section */}
         <div className="flex items-center gap-6 lg:gap-10">
           <Link href="/" className="flex items-center gap-2 z-50" data-testid="link-home">
@@ -36,7 +36,7 @@ export const Navbar = () => {
               SIDFLIX
             </span>
           </Link>
-          
+
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="/" className="text-foreground/80 hover:text-white transition-colors" data-testid="nav-home">Home</Link>
             <Link href="/movies" className="text-foreground/80 hover:text-white transition-colors" data-testid="nav-movies">Movies</Link>

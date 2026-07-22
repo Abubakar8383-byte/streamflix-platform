@@ -5,17 +5,35 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+function extractApiError(err: unknown): string {
+  if (err && typeof err === "object" && "data" in err) {
+    const data = (err as { data: unknown }).data;
+    if (data && typeof data === "object" && "error" in data) {
+      return String((data as { error: string }).error);
+    }
+  }
+  return "Something went wrong. Please try again.";
+}
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const [, setLocation] = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
-      login(email);
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
       setLocation("/profiles");
+    } catch (err) {
+      setError(extractApiError(err));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -23,9 +41,9 @@ export default function Login() {
     <div className="min-h-screen relative flex flex-col bg-background">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://picsum.photos/seed/sidflix-bg/1920/1080" 
-          alt="Background" 
+        <img
+          src="https://picsum.photos/seed/sidflix-bg/1920/1080"
+          alt="Background"
           className="w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background to-background" />
@@ -40,49 +58,74 @@ export default function Login() {
 
       {/* Form Container */}
       <div className="flex-1 flex items-center justify-center relative z-10 px-4 py-12">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-black/60 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-2xl w-full max-w-md shadow-2xl"
         >
           <h1 className="text-3xl font-bold text-white mb-8">Sign In</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div className="relative">
-                <Input 
-                  type="email" 
-                  placeholder="Email or phone number" 
+                <Input
+                  type="email"
+                  placeholder="Email or phone number"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isSubmitting}
                   className="h-14 bg-white/5 border-white/10 text-white focus-visible:ring-primary focus-visible:border-primary transition-all text-base px-4"
                   data-testid="input-email"
                 />
               </div>
               <div className="relative">
-                <Input 
-                  type="password" 
-                  placeholder="Password" 
+                <Input
+                  type="password"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={isSubmitting}
                   className="h-14 bg-white/5 border-white/10 text-white focus-visible:ring-primary focus-visible:border-primary transition-all text-base px-4"
                   data-testid="input-password"
                 />
               </div>
             </div>
-            
-            <Button type="submit" size="lg" className="w-full h-12 text-lg font-semibold" data-testid="btn-submit">
-              Sign In
+
+            {/* Error message */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-lg bg-destructive/15 border border-destructive/30 px-4 py-3 text-sm text-destructive"
+                data-testid="text-error"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full h-12 text-lg font-semibold"
+              disabled={isSubmitting}
+              data-testid="btn-submit"
+            >
+              {isSubmitting ? "Signing in…" : "Sign In"}
             </Button>
-            
+
             <div className="flex justify-between items-center text-sm text-muted-foreground mt-2">
               <label className="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
-                <input type="checkbox" className="rounded border-white/20 bg-transparent text-primary focus:ring-primary/20 accent-primary" />
+                <input
+                  type="checkbox"
+                  className="rounded border-white/20 bg-transparent text-primary focus:ring-primary/20 accent-primary"
+                />
                 Remember me
               </label>
-              <a href="#" className="hover:underline hover:text-white transition-colors">Need help?</a>
+              <a href="#" className="hover:underline hover:text-white transition-colors">
+                Need help?
+              </a>
             </div>
           </form>
 

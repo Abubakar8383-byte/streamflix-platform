@@ -46,6 +46,9 @@ async function buildAll() {
       "dtrace-provider",
       "isolated-vm",
       "lightningcss",
+      // connect-pg-simple reads table.sql from its own package directory at runtime
+      // and must not be bundled — it must be require()'d from node_modules
+      "connect-pg-simple",
       "pg-native",
       "oracledb",
       "mongodb-client-encryption",

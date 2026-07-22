@@ -1,8 +1,20 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+} from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useAuthMe,
+  useAuthLogin,
+  useAuthSignup,
+  useAuthLogout,
+  getAuthMeQueryKey,
+} from "@workspace/api-client-react";
+import type { AuthUser } from "@workspace/api-client-react";
 
-type User = {
-  email: string;
-};
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type Profile = {
   name: string;
@@ -10,49 +22,67 @@ type Profile = {
 };
 
 type AuthState = {
-  user: User | null;
+  user: AuthUser | null;
   profile: Profile | null;
-  login: (email: string) => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   selectProfile: (name: string, avatarSeed: string) => void;
 };
 
+// ─── Context ──────────────────────────────────────────────────────────────────
+
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
-const profilesList = [
-  { name: "Alex", avatarSeed: "Alex" },
-  { name: "Jamie", avatarSeed: "Jamie" },
-  { name: "Sam", avatarSeed: "Sam" }
-];
+// ─── Provider ─────────────────────────────────────────────────────────────────
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("sidflix_user");
-    const storedProfile = localStorage.getItem("sidflix_profile");
-    
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (storedProfile) {
-      setProfile(JSON.parse(storedProfile));
-    }
-    setIsLoading(false);
-  }, []);
+  // Fetch current user from the server on mount.
+  // 401 responses are treated as "not authenticated" (isError=true, data=undefined).
+  const { data: authUser, isPending } = useAuthMe({
+    query: {
+      queryKey: getAuthMeQueryKey(),
+      retry: false,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  });
 
-  const login = (email: string) => {
-    const newUser = { email };
-    setUser(newUser);
-    localStorage.setItem("sidflix_user", JSON.stringify(newUser));
+  // Profile is a local UI preference (which avatar the user picked).
+  // It is stored in localStorage and cleared on logout.
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const stored = localStorage.getItem("sidflix_profile");
+      return stored ? (JSON.parse(stored) as Profile) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const loginMutation = useAuthLogin();
+  const signupMutation = useAuthSignup();
+  const logoutMutation = useAuthLogout();
+
+  const login = async (email: string, password: string): Promise<void> => {
+    const user = await loginMutation.mutateAsync({ data: { email, password } });
+    queryClient.setQueryData(getAuthMeQueryKey(), user);
   };
 
-  const logout = () => {
-    setUser(null);
+  const signup = async (email: string, password: string): Promise<void> => {
+    const user = await signupMutation.mutateAsync({ data: { email, password } });
+    queryClient.setQueryData(getAuthMeQueryKey(), user);
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch {
+      // Even if the server call fails, clear local state
+    }
+    queryClient.setQueryData(getAuthMeQueryKey(), undefined);
     setProfile(null);
-    localStorage.removeItem("sidflix_user");
     localStorage.removeItem("sidflix_profile");
   };
 
@@ -62,16 +92,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("sidflix_profile", JSON.stringify(newProfile));
   };
 
-  if (isLoading) {
-    return null; // Or a sleek loading spinner
+  // Block rendering until we know the auth state (avoids UI flicker)
+  if (isPending) {
+    return null;
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, login, logout, selectProfile }}>
+    <AuthContext.Provider
+      value={{
+        user: authUser ?? null,
+        // Only expose profile when user is authenticated
+        profile: authUser ? profile : null,
+        login,
+        signup,
+        logout,
+        selectProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
