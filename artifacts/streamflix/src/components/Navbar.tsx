@@ -54,7 +54,7 @@ export const Navbar = () => {
             <Bell className="w-5 h-5" />
           </Button>
 
-          {profile ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-sm" data-testid="btn-user-menu">
