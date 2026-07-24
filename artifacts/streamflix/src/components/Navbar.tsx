@@ -55,36 +55,44 @@ export const Navbar = () => {
           </Button>
 
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-sm" data-testid="btn-user-menu">
-                  <img
-  src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${profile?.avatarSeed || "Alex2"}`}
-  alt={profile?.name || "User"}
-  className="h-8 w-8 rounded-sm object-cover bg-muted"
-/>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none text-white">{profile.name}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setLocation("/profiles")} className="cursor-pointer" data-testid="menu-switch-profile">
-                  Switch Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive" data-testid="menu-logout">
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button asChild variant="default" size="sm" className="hidden sm:flex" data-testid="btn-login">
-              <Link href="/login">Sign In</Link>
-            </Button>
-          )}
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button
+        variant="ghost"
+        className="relative h-8 w-8 rounded-sm p-0 overflow-hidden"
+      >
+        <img
+          src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${profile?.avatarSeed || "Alex2"}`}
+          alt={profile?.name || "User"}
+          className="w-full h-full object-cover"
+        />
+      </Button>
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent align="end">
+      <DropdownMenuLabel>
+        {profile?.name || user.email}
+      </DropdownMenuLabel>
+
+      <DropdownMenuSeparator />
+
+      <DropdownMenuItem onClick={() => setLocation("/profiles")}>
+        Switch Profile
+      </DropdownMenuItem>
+
+      <DropdownMenuItem
+        onClick={handleLogout}
+        className="text-red-500"
+      >
+        Sign Out
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+) : (
+  <Button asChild>
+    <Link href="/login">Sign In</Link>
+  </Button>
+)}
 
           <Button variant="ghost" size="icon" className="md:hidden text-foreground/80" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} data-testid="btn-mobile-menu">
             <Menu className="w-5 h-5" />
