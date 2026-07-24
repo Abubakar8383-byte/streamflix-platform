@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user: authUser ?? null,
         // Only expose profile when user is authenticated
-        profile: authUser ? profile : null,
+        profile: profile,
         login,
         signup,
         logout,
