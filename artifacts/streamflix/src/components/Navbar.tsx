@@ -32,10 +32,11 @@ export const Navbar = () => {
         {/* Left section */}
         <div className="flex items-center gap-6 lg:gap-10">
           <Link href="/" className="flex items-center gap-2 z-50" data-testid="link-home">
-            <span className="text-primary font-black text-2xl tracking-tighter uppercase">
-              SIDFLIX
-            </span>
-          </Link>
+  <span className="text-red-600 hover:text-red-500 font-black text-2xl tracking-wider uppercase transition-colors">
+    SIDFLIX
+  </span>
+</Link>
+
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="/" className="text-foreground/80 hover:text-white transition-colors" data-testid="nav-home">Home</Link>
