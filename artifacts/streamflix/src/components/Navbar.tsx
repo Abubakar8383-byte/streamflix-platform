@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const Navbar = () => {
-  const { profile, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const [, setLocation] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,7 +58,11 @@ export const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-sm" data-testid="btn-user-menu">
-                  <img src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${profile.avatarSeed}`} alt={profile.name} className="h-8 w-8 rounded-sm object-cover bg-muted" />
+                  <img
+  src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${profile?.avatarSeed || "Alex2"}`}
+  alt={profile?.name || "User"}
+  className="h-8 w-8 rounded-sm object-cover bg-muted"
+/>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
