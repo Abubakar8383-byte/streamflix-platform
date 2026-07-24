@@ -17,17 +17,15 @@ const queryClient = new QueryClient();
 
 function Router() {
   return (
-    <AnimatePresence mode="wait">
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/movies" component={Movies} />
-        <Route path="/movies/:id" component={MovieDetails} />
-        <Route path="/login" component={Login} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/profiles" component={Profiles} />
-        <Route component={NotFound} />
-      </Switch>
-    </AnimatePresence>
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/movies" component={Movies} />
+      <Route path="/movies/:id" component={MovieDetails} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+      <Route path="/profiles" component={Profiles} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
