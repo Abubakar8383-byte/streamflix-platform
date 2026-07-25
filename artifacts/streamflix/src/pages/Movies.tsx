@@ -1,88 +1,126 @@
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { MovieCard } from "@/components/MovieCard";
-import { movies } from "@/data/movies";
+export type Movie = {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  posterUrl: string;
+  backdropUrl: string;
+  trailerUrl: string;
+  year: number;
+  runtime: string;
+  rating: number;
+  ageRating: string;
+  featured?: boolean;
+  genres: string[];
+  cast: {
+    name: string;
+    character: string;
+    avatarUrl: string;
+  }[];
+  parentsGuide: {
+    violence: { level: string; score: number };
+    sexNudity: { level: string; score: number };
+    profanity: { level: string; score: number };
+    alcoholDrugs: { level: string; score: number };
+    frightening: { level: string; score: number };
+    summary: string;
+  };
+};
 
-const allGenres = ["All", ...Array.from(new Set(movies.flatMap(m => m.genres))).sort()];
+export const movies: Movie[] = [
+  {
+    id: "blade-runner-2049",
+    title: "Blade Runner 2049",
+    tagline: "There's still a page left to be written.",
+    description: "Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard, who's been missing for thirty years.",
+    posterUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop",
+    backdropUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop",
+    trailerUrl: "https://www.youtube-nocookie.com/embed/gCcx85zbxz4?autoplay=1",
+    year: 2017,
+    runtime: "2h 44m",
+    rating: 8.0,
+    ageRating: "16+",
+    featured: true,
+    genres: ["Sci-Fi", "Action", "Cyberpunk"],
+    cast: [
+      { name: "Ryan Gosling", character: "K", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200" },
+      { name: "Harrison Ford", character: "Rick Deckard", avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200" }
+    ],
+    parentsGuide: {
+      violence: { level: "Moderate", score: 65 },
+      sexNudity: { level: "Moderate", score: 55 },
+      profanity: { level: "Moderate", score: 45 },
+      alcoholDrugs: { level: "Mild", score: 20 },
+      frightening: { level: "Moderate", score: 60 },
+      summary: "Contains sci-fi violence, intense combat, and brief nudity."
+    }
+  },
+  {
+    id: "the-batman",
+    title: "The Batman",
+    tagline: "Unmask the truth.",
+    description: "When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption.",
+    posterUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop",
+    backdropUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop",
+    trailerUrl: "https://www.youtube-nocookie.com/embed/mqqft2x_Aa4?autoplay=1",
+    year: 2022,
+    runtime: "2h 56m",
+    rating: 7.7,
+    ageRating: "16+",
+    genres: ["Action", "Crime", "Drama"],
+    cast: [
+      { name: "Robert Pattinson", character: "Bruce Wayne", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" }
+    ],
+    parentsGuide: {
+      violence: { level: "Severe", score: 85 },
+      sexNudity: { level: "Mild", score: 15 },
+      profanity: { level: "Moderate", score: 50 },
+      alcoholDrugs: { level: "Mild", score: 30 },
+      frightening: { level: "Severe", score: 80 },
+      summary: "Gritty dark thriller featuring strong violence and disturbing scenes."
+    }
+  },
+  {
+    id: "interstellar",
+    title: "Interstellar",
+    tagline: "Mankind was born on Earth. It was never meant to die here.",
+    description: "When Earth becomes uninhabitable, a team of ex-NASA pilots travel through a wormhole in search of a new home for humanity.",
+    posterUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop",
+    backdropUrl: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1200&auto=format&fit=crop",
+    trailerUrl: "https://www.youtube-nocookie.com/embed/zSWdZVtXT7E?autoplay=1",
+    year: 2014,
+    runtime: "2h 49m",
+    rating: 8.7,
+    ageRating: "13+",
+    genres: ["Sci-Fi", "Adventure", "Drama"],
+    cast: [
+      { name: "Matthew McConaughey", character: "Cooper", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200" }
+    ],
+    parentsGuide: {
+      violence: { level: "Mild", score: 30 },
+      sexNudity: { level: "None", score: 0 },
+      profanity: { level: "Mild", score: 35 },
+      alcoholDrugs: { level: "None", score: 0 },
+      frightening: { level: "Severe", score: 75 },
+      summary: "Intense space peril, catastrophic disasters, and emotional distress."
+    }
+  }
+];
 
-export default function Movies() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeGenre, setActiveGenre] = useState("All");
-
-  const filteredMovies = useMemo(() => {
-    return movies.filter(movie => {
-      const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            movie.cast.some(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchesGenre = activeGenre === "All" || movie.genres.includes(activeGenre);
-      return matchesSearch && matchesGenre;
-    });
-  }, [searchQuery, activeGenre]);
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen pt-24 pb-12 px-4 md:px-8 max-w-screen-2xl mx-auto w-full"
-    >
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Browse Movies</h1>
-        
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search titles, actors..." 
-            className="pl-9 bg-card/50 border-white/10 focus-visible:ring-primary h-10 w-full rounded-full"
-            data-testid="input-search"
-          />
-        </div>
-      </div>
-
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-8 pb-2">
-        {allGenres.map(genre => (
-          <button
-            key={genre}
-            onClick={() => setActiveGenre(genre)}
-            data-testid={`filter-${genre}`}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              activeGenre === genre 
-                ? "bg-primary text-primary-foreground" 
-                : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-white/5"
-            }`}
-          >
-            {genre}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-        <AnimatePresence mode="popLayout">
-          {filteredMovies.map((movie, index) => (
-            <motion.div
-              key={movie.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-            >
-              <MovieCard movie={movie} index={index % 10} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-      
-      {filteredMovies.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
-          <Search className="w-12 h-12 mb-4 opacity-20" />
-          <h3 className="text-xl font-semibold text-white mb-2">No movies found</h3>
-          <p>We couldn't find anything matching your search.</p>
-        </div>
-      )}
-    </motion.div>
-  );
-}
+export const categories = [
+  {
+    id: "trending",
+    title: "Trending Now",
+    movies: movies
+  },
+  {
+    id: "action",
+    title: "Action & Thriller",
+    movies: movies.filter(m => m.genres.includes("Action") || m.genres.includes("Thriller"))
+  },
+  {
+    id: "scifi",
+    title: "Sci-Fi & Cyberpunk",
+    movies: movies.filter(m => m.genres.includes("Sci-Fi"))
+  }
+];
