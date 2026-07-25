@@ -121,26 +121,24 @@ export const Navbar = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="relative h-10 w-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
-                  aria-label="Open profile menu"
-                >
-                  <img
-                    src={avatarUrl}
-                    alt={profile?.name || "Profile"}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+  <button
+    type="button"
+    className="relative flex items-center justify-center h-10 w-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
+    aria-label="Open profile menu"
+  >
+    {/* Background fallback */}
+    <span className="absolute inset-0 flex items-center justify-center bg-zinc-700 text-white">
+      <User className="w-5 h-5" />
+    </span>
 
-                  {/* Fallback icon behind the image */}
-                  <span className="absolute inset-0 flex items-center justify-center text-white">
-                    <User className="w-5 h-5" />
-                  </span>
-                </button>
-              </DropdownMenuTrigger>
+    {/* Profile Avatar */}
+    <img
+      src={avatarUrl}
+      alt={profile?.name || "Profile"}
+      className="absolute inset-0 z-10 block h-full w-full object-cover"
+    />
+  </button>
+</DropdownMenuTrigger>
 
               <DropdownMenuContent
                 align="end"
