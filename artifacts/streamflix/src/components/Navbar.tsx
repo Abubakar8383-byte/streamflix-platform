@@ -39,15 +39,11 @@ export const Navbar = () => {
   };
 
   // Always have a valid avatar URL
-  const avatarSeed =
-    profile?.avatarSeed ||
-    profile?.name ||
-    user?.email ||
-    "SIDFLIX";
+  const avatarSeed = profile?.avatarSeed || "Alex2";
 
-  const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
-    avatarSeed
-  )}`;
+const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
+  avatarSeed
+)}`;
 
   return (
     <header
