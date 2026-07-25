@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
-import { Search, Bell, Menu } from "lucide-react";
+import { Search, Bell, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,6 +37,17 @@ export const Navbar = () => {
     setMobileMenuOpen(false);
     setLocation("/login");
   };
+
+  // Always have a valid avatar URL
+  const avatarSeed =
+    profile?.avatarSeed ||
+    profile?.name ||
+    user?.email ||
+    "SIDFLIX";
+
+  const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
+    avatarSeed
+  )}`;
 
   return (
     <header
@@ -91,7 +102,6 @@ export const Navbar = () => {
             size="icon"
             className="text-white/80 hover:text-white hover:bg-white/10 hidden sm:flex"
             asChild
-            data-testid="btn-search"
           >
             <Link href="/movies">
               <Search className="w-5 h-5" />
@@ -103,7 +113,6 @@ export const Navbar = () => {
             variant="ghost"
             size="icon"
             className="text-white/80 hover:text-white hover:bg-white/10 hidden sm:flex"
-            data-testid="btn-notifications"
           >
             <Bell className="w-5 h-5" />
           </Button>
@@ -112,46 +121,53 @@ export const Navbar = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-9 w-9 rounded-sm p-0 overflow-hidden"
+                <button
+                  type="button"
+                  className="relative h-10 w-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  aria-label="Open profile menu"
                 >
                   <img
-                    src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${
-                      profile?.avatarSeed || "Alex2"
-                    }`}
-                    alt={profile?.name || "User"}
-                    className="w-full h-full object-cover"
+                    src={avatarUrl}
+                    alt={profile?.name || "Profile"}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
                   />
-                </Button>
+
+                  {/* Fallback icon behind the image */}
+                  <span className="absolute inset-0 flex items-center justify-center text-white">
+                    <User className="w-5 h-5" />
+                  </span>
+                </button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 align="end"
-                className="bg-background border-white/10"
+                className="w-56 bg-zinc-900 border-white/10 text-white"
               >
-                <DropdownMenuLabel>
-                  {profile?.name || user.email}
+                <DropdownMenuLabel className="text-white">
+                  {profile?.name || user.email || "User"}
                 </DropdownMenuLabel>
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-white/10" />
 
                 <DropdownMenuItem
                   onClick={() => setLocation("/profiles")}
+                  className="cursor-pointer focus:bg-white/10 focus:text-white"
                 >
                   Switch Profile
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-red-500 cursor-pointer"
+                  className="text-red-500 cursor-pointer focus:bg-red-500/10 focus:text-red-500"
                 >
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            /* SIGN IN AFTER LOGOUT */
             <Button
               asChild
               className="bg-red-600 hover:bg-red-700 text-white font-semibold"
@@ -162,13 +178,12 @@ export const Navbar = () => {
             </Button>
           )}
 
-          {/* MOBILE MENU BUTTON */}
+          {/* MOBILE MENU */}
           <Button
             variant="ghost"
             size="icon"
             className="md:hidden text-white hover:bg-white/10"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            data-testid="btn-mobile-menu"
           >
             <Menu className="w-5 h-5" />
           </Button>
