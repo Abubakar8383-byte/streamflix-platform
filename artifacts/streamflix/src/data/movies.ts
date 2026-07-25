@@ -9,14 +9,34 @@ export type Movie = {
   title: string;
   tagline: string;
   description: string;
+
   year: number;
-  rating: number;
   runtime: string;
+  rating: number;
+
   genres: string[];
+
   posterUrl: string;
   backdropUrl: string;
+
   cast: CastMember[];
+
   featured?: boolean;
+
+  // NEW
+  trailerUrl?: string;
+  director?: string;
+  writers?: string[];
+  ageRating?: string;
+
+  parentsGuide?: {
+    violence: string;
+    sexNudity: string;
+    profanity: string;
+    alcoholDrugsSmoking: string;
+    frighteningScenes: string;
+    summary: string;
+  };
 };
 
 const generateCast = (seed: string): CastMember[] => [
