@@ -129,10 +129,14 @@ const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURICo
 
     {/* Profile Avatar */}
     <img
-      src={avatarUrl}
-      alt={profile?.name || "Profile"}
-      className="absolute inset-0 z-10 block h-full w-full object-cover"
-    />
+  src={avatarUrl}
+  alt={profile?.name || "Profile"}
+  className="absolute inset-0 z-10 block h-full w-full object-cover"
+  onError={(e) => {
+    e.currentTarget.src =
+      "https://api.dicebear.com/9.x/initials/svg?seed=Alex";
+  }}
+/>
   </button>
 </DropdownMenuTrigger>
 
