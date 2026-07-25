@@ -38,12 +38,13 @@ export const Navbar = () => {
     setLocation("/login");
   };
 
-  // Always have a valid avatar URL
+  // Get the selected profile's avatar seed
   const avatarSeed = profile?.avatarSeed || "Alex2";
 
-const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
-  avatarSeed
-)}`;
+  // Use the exact same DiceBear avatar format as Profiles.tsx
+  const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
+    avatarSeed
+  )}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc`;
 
   return (
     <header
@@ -98,6 +99,7 @@ const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURICo
             size="icon"
             className="text-white/80 hover:text-white hover:bg-white/10 hidden sm:flex"
             asChild
+            data-testid="btn-search"
           >
             <Link href="/movies">
               <Search className="w-5 h-5" />
@@ -109,39 +111,45 @@ const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURICo
             variant="ghost"
             size="icon"
             className="text-white/80 hover:text-white hover:bg-white/10 hidden sm:flex"
+            data-testid="btn-notifications"
           >
             <Bell className="w-5 h-5" />
           </Button>
 
-          {/* AUTH SECTION */}
+          {/* PROFILE */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-  <button
-    type="button"
-    className="relative flex items-center justify-center h-10 w-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
-    aria-label="Open profile menu"
-  >
-    {/* Background fallback */}
-    <span className="absolute inset-0 flex items-center justify-center bg-zinc-700 text-white">
-      <User className="w-5 h-5" />
-    </span>
+                <button
+                  type="button"
+                  aria-label="Open profile menu"
+                  className="relative flex-shrink-0 w-10 h-10 min-w-10 min-h-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
+                >
+                  {/* Fallback background */}
+                  <span className="absolute inset-0 z-0 flex items-center justify-center bg-zinc-800 text-white">
+                    <User className="w-5 h-5" />
+                  </span>
 
-    {/* Profile Avatar */}
-    <img
-  src={avatarUrl}
-  alt={profile?.name || "Profile"}
-  className="absolute inset-0 z-10 block h-full w-full object-cover"
-  onError={(e) => {
-    e.currentTarget.src =
-      "https://api.dicebear.com/9.x/initials/svg?seed=Alex";
-  }}
-/>
-  </button>
-</DropdownMenuTrigger>
+                  {/* PROFILE AVATAR */}
+                  <img
+                    src={avatarUrl}
+                    alt={profile?.name || "Profile"}
+                    className="absolute inset-0 z-10 block w-full h-full object-cover"
+                    onError={(event) => {
+                      console.error(
+                        "SIDFLIX avatar failed to load:",
+                        avatarUrl
+                      );
+                      event.currentTarget.style.display = "none";
+                    }}
+                  />
+                </button>
+              </DropdownMenuTrigger>
 
+              {/* DROPDOWN */}
               <DropdownMenuContent
                 align="end"
+                sideOffset={8}
                 className="w-56 bg-zinc-900 border-white/10 text-white"
               >
                 <DropdownMenuLabel className="text-white">
@@ -166,6 +174,7 @@ const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURICo
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
+            /* SIGN IN */
             <Button
               asChild
               className="bg-red-600 hover:bg-red-700 text-white font-semibold"
@@ -176,12 +185,13 @@ const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURICo
             </Button>
           )}
 
-          {/* MOBILE MENU */}
+          {/* MOBILE MENU BUTTON */}
           <Button
             variant="ghost"
             size="icon"
             className="md:hidden text-white hover:bg-white/10"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            data-testid="btn-mobile-menu"
           >
             <Menu className="w-5 h-5" />
           </Button>
