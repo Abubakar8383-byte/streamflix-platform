@@ -31,7 +31,7 @@ router.post("/profiles", requireAuth, async (req, res) => {
 
 // PUT /api/profiles/:id
 router.put("/profiles/:id", requireAuth, async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(String(req.params.id), 10);
   const { name } = req.body as Record<string, unknown>;
   if (typeof name !== "string" || !name.trim()) {
     res.status(400).json({ error: "Profile name is required." });
@@ -48,7 +48,7 @@ router.put("/profiles/:id", requireAuth, async (req, res) => {
 
 // DELETE /api/profiles/:id
 router.delete("/profiles/:id", requireAuth, async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(String(req.params.id), 10);
   await db
     .delete(profilesTable)
     .where(and(eq(profilesTable.id, id), eq(profilesTable.userId, req.session.userId!)));
@@ -58,7 +58,7 @@ router.delete("/profiles/:id", requireAuth, async (req, res) => {
 
 // POST /api/profiles/:id/select
 router.post("/profiles/:id/select", requireAuth, async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(String(req.params.id), 10);
   const [profile] = await db
     .select()
     .from(profilesTable)
