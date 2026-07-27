@@ -104,4 +104,10 @@ export const movies: Movie[] = [
     }
   }
 ];
-  
+
+export const categories: { name: string; movies: Movie[] }[] = Array.from(
+  new Set(movies.flatMap((m) => m.genres)),
+).map((genre) => ({
+  name: genre,
+  movies: movies.filter((m) => m.genres.includes(genre)),
+}));
