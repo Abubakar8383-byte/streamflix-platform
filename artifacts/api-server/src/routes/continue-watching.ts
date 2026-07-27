@@ -61,8 +61,8 @@ router.delete("/continue-watching/:tmdbId/:mediaType", requireProfile, async (re
     .where(
       and(
         eq(continueWatchingTable.profileId, req.session.profileId!),
-        eq(continueWatchingTable.tmdbId, parseInt(req.params.tmdbId, 10)),
-        eq(continueWatchingTable.mediaType, req.params.mediaType),
+        eq(continueWatchingTable.tmdbId, parseInt(String(req.params.tmdbId), 10)),
+        eq(continueWatchingTable.mediaType, String(req.params.mediaType)),
       ),
     );
   res.status(204).end();
