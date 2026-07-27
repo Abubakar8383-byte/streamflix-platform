@@ -43,8 +43,8 @@ router.delete("/watchlist/:tmdbId/:mediaType", requireProfile, async (req, res) 
     .where(
       and(
         eq(watchlistTable.profileId, req.session.profileId!),
-        eq(watchlistTable.tmdbId, parseInt(req.params.tmdbId, 10)),
-        eq(watchlistTable.mediaType, req.params.mediaType),
+        eq(watchlistTable.tmdbId, parseInt(String(req.params.tmdbId), 10)),
+        eq(watchlistTable.mediaType, String(req.params.mediaType)),
       ),
     );
   res.status(204).end();
