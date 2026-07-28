@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
-import { Search, Bell, Menu, User } from "lucide-react";
+import { Search, Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -38,13 +38,20 @@ export const Navbar = () => {
     setLocation("/login");
   };
 
-  // Get the selected profile's avatar seed
-  const avatarSeed = profile?.avatarSeed || "Alex2";
+  // --------------------------------------------------
+  // PROFILE AVATAR
+  // Must match the same DiceBear style ("micah") and params
+  // used in Profiles.tsx, or the avatar will look different
+  // between the profile-select screen and the navbar.
+  // --------------------------------------------------
 
-  // Use the exact same DiceBear avatar format as Profiles.tsx
-  const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
-    avatarSeed
-  )}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc`;
+  const avatarSeed = profile?.avatarSeed || "AbuKhan99";
+
+  const avatarUrl =
+    `https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(
+      avatarSeed
+    )}&facialHairProbability=100` +
+    `&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc`;
 
   return (
     <header
@@ -55,11 +62,7 @@ export const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-
-        {/* LEFT SECTION */}
         <div className="flex items-center gap-6 lg:gap-10">
-
-          {/* SIDFLIX LOGO */}
           <Link
             href="/"
             className="flex items-center z-50"
@@ -70,7 +73,6 @@ export const Navbar = () => {
             </span>
           </Link>
 
-          {/* DESKTOP NAVIGATION */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link
               href="/"
@@ -90,10 +92,7 @@ export const Navbar = () => {
           </nav>
         </div>
 
-        {/* RIGHT SECTION */}
         <div className="flex items-center gap-2 sm:gap-4">
-
-          {/* SEARCH */}
           <Button
             variant="ghost"
             size="icon"
@@ -106,7 +105,6 @@ export const Navbar = () => {
             </Link>
           </Button>
 
-          {/* NOTIFICATIONS */}
           <Button
             variant="ghost"
             size="icon"
@@ -116,40 +114,27 @@ export const Navbar = () => {
             <Bell className="w-5 h-5" />
           </Button>
 
-          {/* PROFILE */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
+                  className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border-2 border-white/30 bg-zinc-800 p-0 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
                   aria-label="Open profile menu"
-                  className="relative flex-shrink-0 w-10 h-10 min-w-10 min-h-10 rounded-md overflow-hidden border-2 border-white/30 bg-zinc-800 hover:border-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  data-testid="btn-profile"
                 >
-                  {/* Fallback background */}
-                  <span className="absolute inset-0 z-0 flex items-center justify-center bg-zinc-800 text-white">
-                    <User className="w-5 h-5" />
-                  </span>
-
-                  {/* PROFILE AVATAR */}
                   <img
                     src={avatarUrl}
                     alt={profile?.name || "Profile"}
-                    className="absolute inset-0 z-10 block w-full h-full object-cover"
-                    onError={(event) => {
-                      console.error(
-                        "SIDFLIX avatar failed to load:",
-                        avatarUrl
-                      );
-                      event.currentTarget.style.display = "none";
-                    }}
+                    width={40}
+                    height={40}
+                    className="block h-10 w-10 object-cover"
                   />
                 </button>
               </DropdownMenuTrigger>
 
-              {/* DROPDOWN */}
               <DropdownMenuContent
                 align="end"
-                sideOffset={8}
                 className="w-56 bg-zinc-900 border-white/10 text-white"
               >
                 <DropdownMenuLabel className="text-white">
@@ -174,10 +159,10 @@ export const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            /* SIGN IN */
             <Button
               asChild
               className="bg-red-600 hover:bg-red-700 text-white font-semibold"
+              data-testid="btn-sign-in"
             >
               <Link href="/login">
                 Sign In
@@ -185,7 +170,6 @@ export const Navbar = () => {
             </Button>
           )}
 
-          {/* MOBILE MENU BUTTON */}
           <Button
             variant="ghost"
             size="icon"
@@ -198,7 +182,6 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -208,7 +191,6 @@ export const Navbar = () => {
             className="md:hidden bg-black/95 backdrop-blur-md border-b border-white/10 overflow-hidden"
           >
             <nav className="flex flex-col p-4 gap-2 text-sm font-medium">
-
               <Link
                 href="/"
                 className="text-white/80 hover:text-white p-3"
@@ -237,8 +219,20 @@ export const Navbar = () => {
 
               {user && (
                 <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setLocation("/profiles");
+                  }}
+                  className="text-white/80 hover:text-white text-left p-3"
+                >
+                  Switch Profile
+                </button>
+              )}
+
+              {user && (
+                <button
                   onClick={handleLogout}
-                  className="text-red-500 text-left p-3"
+                  className="text-red-500 hover:text-red-400 text-left p-3"
                 >
                   Sign Out
                 </button>
